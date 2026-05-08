@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CQB Space: Missão Horizonte Zero</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #e63946; --blue: #0054a6; --yellow: #ffd166;
+    --green: #06d6a0; --space: #07091a; --panel: #131840; --panel2: #1b2253; --white: #f0f4ff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--space);
+    color: var(--white);
+    width: 100%; height: 100%;
+  }
+  body {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    min-height: 100vh; padding: 16px;
+  }
+
+  .stars { position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; }
+  .star { position:absolute; border-radius:50%; background:white; animation: twinkle var(--d) ease-in-out infinite; }
+  @keyframes twinkle { 0%,100%{opacity:.2;transform:scale(1)} 50%{opacity:1;transform:scale(1.4)} }
+
+  #wrapper {
+    position: relative; z-index: 1;
+    width: 100%; max-width: 680px;
+    background: linear-gradient(160deg, var(--panel) 0%, #0e1030 100%);
+    border: 2px solid rgba(100,130,255,0.25);
+    border-radius: 28px;
+    padding: 28px 28px 24px;
+    box-shadow: 0 0 80px rgba(0,60,180,0.35), 0 0 20px rgba(0,0,0,0.7);
+  }
+
+  .screen { display:none; flex-direction:column; align-items:center; gap:18px; }
+  .active { display:flex !important; }
+
+  /* MENU */
+  .game-logo { font-family:'Fredoka One',cursive; font-size:2.6rem; color:var(--yellow); text-shadow:0 0 24px rgba(255,209,102,0.55); text-align:center; line-height:1.1; }
+  .game-logo span { display:block; font-size:1rem; color:rgba(180,200,255,0.6); font-family:'Nunito',sans-serif; font-weight:700; letter-spacing:2px; margin-top:4px; }
+  .story-box { background:rgba(255,255,255,0.06); border:1px solid rgba(100,150,255,0.2); border-radius:18px; padding:20px 24px; font-size:1.05rem; line-height:1.7; text-align:center; color:rgba(220,235,255,0.9); width:100%; }
+  .story-box b { color:var(--yellow); }
+  .big-rocket { font-size:5rem; animation:float 2s ease-in-out infinite; }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+
+  .btn { font-family:'Fredoka One',cursive; font-size:1.25rem; padding:16px 40px; border-radius:50px; border:none; cursor:pointer; transition:transform .15s,box-shadow .15s; }
+  .btn-blue { background:linear-gradient(135deg,#1a6fd4,#0a3fa0); color:white; box-shadow:0 6px 24px rgba(0,84,166,0.5); }
+  .btn-green { background:linear-gradient(135deg,#0eba8a,#057a5e); color:white; box-shadow:0 6px 24px rgba(6,214,160,0.4); }
+  .btn-yellow { background:linear-gradient(135deg,#ffd166,#e5a200); color:#2a1800; box-shadow:0 6px 24px rgba(255,209,102,0.4); }
+  .btn:hover { transform:translateY(-2px) scale(1.04); }
+  .btn:active { transform:scale(0.97); }
+
+  /* HUD */
+  .hud { display:flex; justify-content:space-between; width:100%; }
+  .hud-item { text-align:center; }
+  .hud-label { font-size:0.75rem; font-weight:700; color:rgba(160,190,255,0.6); letter-spacing:1.5px; text-transform:uppercase; }
+  .hud-val { font-family:'Fredoka One',cursive; font-size:1.6rem; color:var(--yellow); line-height:1; }
+  .progress-bar { width:100%; height:12px; background:rgba(255,255,255,0.1); border-radius:10px; overflow:hidden; }
+  .progress-fill { height:100%; background:linear-gradient(90deg,#0054a6,#06d6a0); border-radius:10px; transition:width .7s cubic-bezier(.4,0,.2,1); }
+
+  /* JOGO MAIN */
+  .game-main { display:flex; gap:16px; width:100%; }
+
+  /* TRILHA */
+  .track-col { width:56px; flex-shrink:0; display:flex; flex-direction:column; align-items:center; background:rgba(255,255,255,0.05); border-radius:18px; padding:12px 0; }
+  .track-label { font-size:0.6rem; color:rgba(140,170,255,0.5); letter-spacing:1px; text-transform:uppercase; writing-mode:vertical-rl; transform:rotate(180deg); margin-bottom:8px; }
+  .track-inner { flex:1; width:28px; background:rgba(255,255,255,0.07); border-radius:14px; position:relative; min-height:180px; }
+  .track-planet { font-size:1.5rem; position:absolute; top:6px; left:50%; transform:translateX(-50%); animation:spinPlanet 8s linear infinite; }
+  @keyframes spinPlanet { from{transform:translateX(-50%) rotate(0)} to{transform:translateX(-50%) rotate(360deg)} }
+  #rocket { font-size:1.5rem; position:absolute; bottom:8px; left:50%; transform:translateX(-50%); transition:bottom .8s cubic-bezier(.47,0,.74,.71); filter:drop-shadow(0 0 8px rgba(120,200,255,0.8)); }
+
+  /* CONTEÚDO */
+  .content-col { flex:1; display:flex; flex-direction:column; gap:14px; }
+
+  .question-box { background:rgba(255,255,255,0.07); border:1px solid rgba(100,150,255,0.25); border-radius:18px; padding:20px 16px; text-align:center; }
+  .question-label { font-size:0.72rem; font-weight:700; color:rgba(150,180,255,0.55); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:6px; }
+  .question-text { font-family:'Fredoka One',cursive; font-size:2.8rem; color:white; letter-spacing:1px; }
+  .question-text span { color:var(--yellow); }
+
+  .astro-row { display:flex; gap:12px; align-items:flex-start; }
+
+  /* ASTRONAUTA */
+  .astro-box { width:90px; flex-shrink:0; background:rgba(255,255,255,0.06); border:1px solid rgba(100,150,255,0.2); border-radius:18px; display:flex; flex-direction:column; align-items:center; padding:10px 6px; gap:4px; }
+  .astro-label { font-size:0.62rem; font-weight:700; color:rgba(150,180,255,0.5); letter-spacing:1px; text-transform:uppercase; }
+  .astro-face { font-size:3rem; line-height:1; transition:transform .2s; }
+  .astro-name { font-size:0.68rem; font-weight:800; color:rgba(180,210,255,0.65); }
+  .astro-box.correct { animation:astroCorrect .7s ease; background:rgba(6,214,160,0.15); border-color:rgba(6,214,160,0.5); }
+  .astro-box.wrong { animation:astroWrong .6s ease; background:rgba(230,57,70,0.15); border-color:rgba(230,57,70,0.5); }
+  @keyframes astroCorrect { 0%{transform:scale(1)} 25%{transform:scale(1.18) rotate(-6deg)} 50%{transform:scale(1.22) rotate(6deg)} 75%{transform:scale(1.12) rotate(-3deg)} 100%{transform:scale(1)} }
+  @keyframes astroWrong { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-7px)} 40%{transform:translateX(7px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)} }
+
+  .speech-bubble { flex:1; background:rgba(255,255,255,0.07); border:1px solid rgba(100,150,255,0.2); border-radius:14px; padding:14px 16px; font-size:0.9rem; font-weight:700; line-height:1.5; min-height:74px; display:flex; align-items:center; color:rgba(200,220,255,0.85); transition:all .3s; position:relative; }
+  .speech-bubble::before { content:''; position:absolute; left:-9px; top:50%; transform:translateY(-50%); border:9px solid transparent; border-right-color:rgba(255,255,255,0.07); }
+  .speech-bubble.correct-msg { background:rgba(6,214,160,0.14); border-color:rgba(6,214,160,0.45); color:#06d6a0; }
+  .speech-bubble.wrong-msg { background:rgba(230,57,70,0.12); border-color:rgba(230,57,70,0.4); color:#ff8080; }
+
+  .input-row { display:flex; gap:10px; }
+  #answerInput { flex:1; padding:14px 16px; font-size:1.4rem; font-family:'Fredoka One',cursive; border-radius:16px; border:2px solid rgba(100,150,255,0.3); background:rgba(255,255,255,0.08); color:white; text-align:center; outline:none; transition:border-color .2s; }
+  #answerInput:focus { border-color:rgba(100,180,255,0.7); background:rgba(255,255,255,0.12); }
+  #answerInput::placeholder { color:rgba(150,170,255,0.35); font-size:1rem; }
+
+  /* VITÓRIA */
+  .win-trophy { font-size:6rem; animation:bounceWin .6s ease infinite alternate; }
+  @keyframes bounceWin { from{transform:translateY(0) scale(1)} to{transform:translateY(-16px) scale(1.1)} }
+  .win-title { font-family:'Fredoka One',cursive; font-size:2.8rem; color:var(--yellow); text-align:center; text-shadow:0 0 32px rgba(255,209,102,0.6); }
+  .win-stars { font-size:2.4rem; letter-spacing:8px; }
+  .win-msg { text-align:center; font-size:1.05rem; font-weight:700; color:rgba(200,220,255,0.85); line-height:1.7; }
+  .win-score { font-family:'Fredoka One',cursive; font-size:3.5rem; color:var(--green); }
+
+  .confetti-piece { position:fixed; top:-10px; animation:confettiFall linear forwards; border-radius:2px; z-index:999; }
+  @keyframes confettiFall { to{transform:translateY(110vh) rotate(720deg);opacity:0;} }
+
+  footer { margin-top:18px; font-size:0.8rem; color:rgba(120,140,200,0.4); letter-spacing:1px; text-align:center; position:relative; z-index:1; }
+
+  @keyframes shake { 0%,100%{transform:translateX(-50%)} 25%{transform:translateX(calc(-50% - 6px))} 75%{transform:translateX(calc(-50% + 6px))} }
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<div id="wrapper">
+
+  <!-- MENU -->
+  <div id="menu-screen" class="screen active">
+    <div class="game-logo">🛸 CQB Space<span>Missão Horizonte Zero</span></div>
+    <div class="big-rocket">🚀</div>
+    <div class="story-box">
+      <b>Atenção, Recruta!</b><br>
+      Nossa nave perdeu os <b>propulsores decimais</b>! Para voltarmos à Terra, você precisa recalibrar os motores multiplicando por <b>10, 100 e 1000</b>.<br><br>
+      Cada acerto correto nos impulsiona mais perto de casa. Boa sorte!
+    </div>
+    <button class="btn btn-blue" onclick="startGame()">🚀 Iniciar Missão!</button>
+  </div>
+
+  <!-- JOGO -->
+  <div id="game-screen" class="screen">
+    <div class="hud">
+      <div class="hud-item"><div class="hud-label">Acertos</div><div class="hud-val" id="scoreHud">0/10</div></div>
+      <div class="hud-item"><div class="hud-label">Nível</div><div class="hud-val" id="levelHud">1</div></div>
+      <div class="hud-item"><div class="hud-label">Fase</div><div class="hud-val" id="stageHud">1</div></div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+
+    <div class="game-main">
+      <div class="track-col">
+        <div class="track-label">Rota</div>
+        <div class="track-inner">
+          <div class="track-planet">🌍</div>
+          <div id="rocket">🚀</div>
+        </div>
+      </div>
+
+      <div class="content-col">
+        <div class="question-box">
+          <div class="question-label">Calcule o resultado</div>
+          <div class="question-text" id="questionText">— <span>×</span> —</div>
+        </div>
+
+        <div class="astro-row">
+          <div class="astro-box" id="astroBox">
+            <div class="astro-label">Astronauta</div>
+            <div class="astro-face" id="astroFace">🧑‍🚀</div>
+            <div class="astro-name">Sgt. Bóris</div>
+          </div>
+          <div class="speech-bubble" id="speechBubble">Pronto para decolar! Me diga o resultado da conta acima. 👆</div>
+        </div>
+
+        <div class="input-row">
+          <input type="number" id="answerInput" placeholder="Sua resposta...">
+          <button class="btn btn-yellow" onclick="checkAnswer()" style="padding:14px 22px;font-size:1.1rem;">LANÇAR!</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VITÓRIA -->
+  <div id="win-screen" class="screen">
+    <div class="win-trophy">🏆</div>
+    <div class="win-title">Missão Cumprida!</div>
+    <div class="win-stars">⭐⭐⭐</div>
+    <div class="win-msg">
+      Incrível! Você dominou os <b>zeros decimais</b> e trouxe a equipe de volta em segurança!<br><br>
+      <div class="win-score" id="finalScore">10/10</div>acertos
+    </div>
+    <button class="btn btn-green" onclick="location.reload()">🔄 Jogar Novamente</button>
+  </div>
+
+</div>
+
+<footer>Desenvolvido por Andrey Farias Ruggero &copy; 2026 · SESI Cerquilho</footer>
+
+<script>
+  const starsEl = document.getElementById('stars');
+  for(let i=0;i<90;i++){
+    const s=document.createElement('div'); s.className='star';
+    const sz=Math.random()*2.5+0.5;
+    s.style.cssText=`width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;--d:${(Math.random()*3+1.5).toFixed(1)}s;animation-delay:${(Math.random()*4).toFixed(1)}s`;
+    starsEl.appendChild(s);
+  }
+
+  let currentAnswer, score=0;
+  const totalStages=10;
+  const astroFace=document.getElementById('astroFace');
+  const astroBox=document.getElementById('astroBox');
+  const speechBubble=document.getElementById('speechBubble');
+  const rocket=document.getElementById('rocket');
+
+  const msgOk=["Sim! Você é incrível! 🎉","Propulsor ativado! 🔥","Perfeito! Em frente! ✨","Uau! Que mente brilhante! 🧠","Correto! A nave agradece! 🚀","Sensacional! Mais um zero! ⭐"];
+  const msgErr=["Opa! Tente outra vez! 💪","Pense nos zeros! 🤔","Não desista! Você consegue! 😤","Quase lá! Tente de novo! 🙌"];
+
+  function startGame(){
+    document.getElementById('menu-screen').classList.remove('active');
+    document.getElementById('game-screen').classList.add('active');
+    generateQuestion();
+  }
+
+  function generateQuestion(){
+    const factors=[10,100,1000];
+    const num=Math.floor(Math.random()*89)+11;
+    const factor=factors[Math.floor(Math.random()*factors.length)];
+    currentAnswer=num*factor;
+    document.getElementById('questionText').innerHTML=`${num} <span>×</span> ${factor}`;
+    document.getElementById('answerInput').value='';
+    document.getElementById('answerInput').focus();
+    astroBox.className='astro-box'; astroFace.textContent='🧑‍🚀';
+    speechBubble.className='speech-bubble'; speechBubble.textContent='Qual é o resultado? Lembre-se dos zeros! 🔢';
+  }
+
+  function checkAnswer(){
+    const val=parseInt(document.getElementById('answerInput').value);
+    if(isNaN(val)) return;
+    if(val===currentAnswer){
+      score++; updateHUD();
+      astroFace.textContent='😄'; astroBox.className='astro-box correct';
+      speechBubble.className='speech-bubble correct-msg';
+      speechBubble.textContent=msgOk[Math.floor(Math.random()*msgOk.length)];
+      moveRocket();
+      if(score>=totalStages) setTimeout(showWinScreen,1300);
+      else setTimeout(generateQuestion,1500);
+    } else {
+      astroFace.textContent='😬'; astroBox.className='astro-box wrong';
+      speechBubble.className='speech-bubble wrong-msg';
+      speechBubble.textContent=msgErr[Math.floor(Math.random()*msgErr.length)];
+      rocket.style.animation='shake 0.5s ease';
+      setTimeout(()=>{
+        rocket.style.animation='';
+        astroBox.className='astro-box'; astroFace.textContent='🧑‍🚀';
+        speechBubble.className='speech-bubble'; speechBubble.textContent='Tente de novo! Eu acredito em você! 💪';
+      },1100);
+    }
+  }
+
+  function updateHUD(){
+    document.getElementById('scoreHud').textContent=`${score}/10`;
+    document.getElementById('levelHud').textContent=score+1;
+    document.getElementById('stageHud').textContent=score+1;
+    document.getElementById('progressFill').style.width=`${(score/totalStages)*100}%`;
+  }
+
+  function moveRocket(){
+    const trackH=document.querySelector('.track-inner').offsetHeight;
+    const newBottom=8+(score/totalStages)*(trackH-50);
+    rocket.style.bottom=newBottom+'px';
+  }
+
+  function showWinScreen(){
+    document.getElementById('game-screen').classList.remove('active');
+    document.getElementById('win-screen').classList.add('active');
+    document.getElementById('finalScore').textContent=`${score}/10`;
+    launchConfetti();
+  }
+
+  function launchConfetti(){
+    const colors=['#ffd166','#06d6a0','#118ab2','#e63946','#a855f7','#fb923c'];
+    for(let i=0;i<100;i++){
+      setTimeout(()=>{
+        const c=document.createElement('div'); c.className='confetti-piece';
+        c.style.cssText=`left:${Math.random()*100}vw;background:${colors[Math.floor(Math.random()*colors.length)]};width:${7+Math.random()*8}px;height:${7+Math.random()*8}px;animation-duration:${1.5+Math.random()*2}s;border-radius:${Math.random()>.5?'50%':'2px'}`;
+        document.body.appendChild(c); setTimeout(()=>c.remove(),3500);
+      },i*35);
+    }
+  }
+
+  document.getElementById('answerInput').addEventListener('keydown',e=>{if(e.key==='Enter')checkAnswer();});
+</script>
+</body>
+</html>
