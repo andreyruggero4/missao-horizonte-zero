@@ -40,7 +40,6 @@
   .screen { display:none; flex-direction:column; align-items:center; gap:18px; }
   .active { display:flex !important; }
 
-  /* MENU */
   .game-logo { font-family:'Fredoka One',cursive; font-size:2.6rem; color:var(--yellow); text-shadow:0 0 24px rgba(255,209,102,0.55); text-align:center; line-height:1.1; }
   .game-logo span { display:block; font-size:1rem; color:rgba(180,200,255,0.6); font-family:'Nunito',sans-serif; font-weight:700; letter-spacing:2px; margin-top:4px; }
   .story-box { background:rgba(255,255,255,0.06); border:1px solid rgba(100,150,255,0.2); border-radius:18px; padding:20px 24px; font-size:1.05rem; line-height:1.7; text-align:center; color:rgba(220,235,255,0.9); width:100%; }
@@ -55,7 +54,6 @@
   .btn:hover { transform:translateY(-2px) scale(1.04); }
   .btn:active { transform:scale(0.97); }
 
-  /* HUD */
   .hud { display:flex; justify-content:space-between; width:100%; }
   .hud-item { text-align:center; }
   .hud-label { font-size:0.75rem; font-weight:700; color:rgba(160,190,255,0.6); letter-spacing:1.5px; text-transform:uppercase; }
@@ -63,10 +61,8 @@
   .progress-bar { width:100%; height:12px; background:rgba(255,255,255,0.1); border-radius:10px; overflow:hidden; }
   .progress-fill { height:100%; background:linear-gradient(90deg,#0054a6,#06d6a0); border-radius:10px; transition:width .7s cubic-bezier(.4,0,.2,1); }
 
-  /* JOGO MAIN */
   .game-main { display:flex; gap:16px; width:100%; }
 
-  /* TRILHA */
   .track-col { width:56px; flex-shrink:0; display:flex; flex-direction:column; align-items:center; background:rgba(255,255,255,0.05); border-radius:18px; padding:12px 0; }
   .track-label { font-size:0.6rem; color:rgba(140,170,255,0.5); letter-spacing:1px; text-transform:uppercase; writing-mode:vertical-rl; transform:rotate(180deg); margin-bottom:8px; }
   .track-inner { flex:1; width:28px; background:rgba(255,255,255,0.07); border-radius:14px; position:relative; min-height:180px; }
@@ -74,7 +70,6 @@
   @keyframes spinPlanet { from{transform:translateX(-50%) rotate(0)} to{transform:translateX(-50%) rotate(360deg)} }
   #rocket { font-size:1.5rem; position:absolute; bottom:8px; left:50%; transform:translateX(-50%); transition:bottom .8s cubic-bezier(.47,0,.74,.71); filter:drop-shadow(0 0 8px rgba(120,200,255,0.8)); }
 
-  /* CONTEÚDO */
   .content-col { flex:1; display:flex; flex-direction:column; gap:14px; }
 
   .question-box { background:rgba(255,255,255,0.07); border:1px solid rgba(100,150,255,0.25); border-radius:18px; padding:20px 16px; text-align:center; }
@@ -84,7 +79,6 @@
 
   .astro-row { display:flex; gap:12px; align-items:flex-start; }
 
-  /* ASTRONAUTA */
   .astro-box { width:90px; flex-shrink:0; background:rgba(255,255,255,0.06); border:1px solid rgba(100,150,255,0.2); border-radius:18px; display:flex; flex-direction:column; align-items:center; padding:10px 6px; gap:4px; }
   .astro-label { font-size:0.62rem; font-weight:700; color:rgba(150,180,255,0.5); letter-spacing:1px; text-transform:uppercase; }
   .astro-face { font-size:3rem; line-height:1; transition:transform .2s; }
@@ -103,8 +97,9 @@
   #answerInput { flex:1; padding:14px 16px; font-size:1.4rem; font-family:'Fredoka One',cursive; border-radius:16px; border:2px solid rgba(100,150,255,0.3); background:rgba(255,255,255,0.08); color:white; text-align:center; outline:none; transition:border-color .2s; }
   #answerInput:focus { border-color:rgba(100,180,255,0.7); background:rgba(255,255,255,0.12); }
   #answerInput::placeholder { color:rgba(150,170,255,0.35); font-size:1rem; }
+  #answerInput:disabled { opacity:0.5; cursor:not-allowed; }
+  #btnLancar:disabled { opacity:0.5; cursor:not-allowed; transform:none !important; }
 
-  /* VITÓRIA */
   .win-trophy { font-size:6rem; animation:bounceWin .6s ease infinite alternate; }
   @keyframes bounceWin { from{transform:translateY(0) scale(1)} to{transform:translateY(-16px) scale(1.1)} }
   .win-title { font-family:'Fredoka One',cursive; font-size:2.8rem; color:var(--yellow); text-align:center; text-shadow:0 0 32px rgba(255,209,102,0.6); }
@@ -126,7 +121,6 @@
 
 <div id="wrapper">
 
-  <!-- MENU -->
   <div id="menu-screen" class="screen active">
     <div class="game-logo">🛸 CQB Space<span>Missão Horizonte Zero</span></div>
     <div class="big-rocket">🚀</div>
@@ -138,7 +132,6 @@
     <button class="btn btn-blue" onclick="startGame()">🚀 Iniciar Missão!</button>
   </div>
 
-  <!-- JOGO -->
   <div id="game-screen" class="screen">
     <div class="hud">
       <div class="hud-item"><div class="hud-label">Acertos</div><div class="hud-val" id="scoreHud">0/10</div></div>
@@ -173,13 +166,12 @@
 
         <div class="input-row">
           <input type="number" id="answerInput" placeholder="Sua resposta...">
-          <button class="btn btn-yellow" onclick="checkAnswer()" style="padding:14px 22px;font-size:1.1rem;">LANÇAR!</button>
+          <button class="btn btn-yellow" id="btnLancar" onclick="checkAnswer()" style="padding:14px 22px;font-size:1.1rem;">LANÇAR!</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- VITÓRIA -->
   <div id="win-screen" class="screen">
     <div class="win-trophy">🏆</div>
     <div class="win-title">Missão Cumprida!</div>
@@ -205,14 +197,22 @@
   }
 
   let currentAnswer, score=0;
+  let isProcessing = false;
   const totalStages=10;
   const astroFace=document.getElementById('astroFace');
   const astroBox=document.getElementById('astroBox');
   const speechBubble=document.getElementById('speechBubble');
   const rocket=document.getElementById('rocket');
+  const answerInput=document.getElementById('answerInput');
+  const btnLancar=document.getElementById('btnLancar');
 
   const msgOk=["Sim! Você é incrível! 🎉","Propulsor ativado! 🔥","Perfeito! Em frente! ✨","Uau! Que mente brilhante! 🧠","Correto! A nave agradece! 🚀","Sensacional! Mais um zero! ⭐"];
   const msgErr=["Opa! Tente outra vez! 💪","Pense nos zeros! 🤔","Não desista! Você consegue! 😤","Quase lá! Tente de novo! 🙌"];
+
+  function setInputLocked(locked) {
+    answerInput.disabled = locked;
+    btnLancar.disabled = locked;
+  }
 
   function startGame(){
     document.getElementById('menu-screen').classList.remove('active');
@@ -221,22 +221,30 @@
   }
 
   function generateQuestion(){
+    isProcessing = false;
+    setInputLocked(false);
     const factors=[10,100,1000];
     const num=Math.floor(Math.random()*89)+11;
     const factor=factors[Math.floor(Math.random()*factors.length)];
     currentAnswer=num*factor;
     document.getElementById('questionText').innerHTML=`${num} <span>×</span> ${factor}`;
-    document.getElementById('answerInput').value='';
-    document.getElementById('answerInput').focus();
+    answerInput.value='';
+    answerInput.focus();
     astroBox.className='astro-box'; astroFace.textContent='🧑‍🚀';
     speechBubble.className='speech-bubble'; speechBubble.textContent='Qual é o resultado? Lembre-se dos zeros! 🔢';
   }
 
   function checkAnswer(){
-    const val=parseInt(document.getElementById('answerInput').value);
+    if(isProcessing) return;
+    const val=parseInt(answerInput.value);
     if(isNaN(val)) return;
+
+    isProcessing = true;
+    setInputLocked(true);
+
     if(val===currentAnswer){
-      score++; updateHUD();
+      score++;
+      updateHUD();
       astroFace.textContent='😄'; astroBox.className='astro-box correct';
       speechBubble.className='speech-bubble correct-msg';
       speechBubble.textContent=msgOk[Math.floor(Math.random()*msgOk.length)];
@@ -251,15 +259,20 @@
       setTimeout(()=>{
         rocket.style.animation='';
         astroBox.className='astro-box'; astroFace.textContent='🧑‍🚀';
-        speechBubble.className='speech-bubble'; speechBubble.textContent='Tente de novo! Eu acredito em você! 💪';
+        speechBubble.className='speech-bubble';
+        speechBubble.textContent='Tente de novo! Eu acredito em você! 💪';
+        isProcessing = false;
+        setInputLocked(false);
+        answerInput.value='';
+        answerInput.focus();
       },1100);
     }
   }
 
   function updateHUD(){
     document.getElementById('scoreHud').textContent=`${score}/10`;
-    document.getElementById('levelHud').textContent=score+1;
-    document.getElementById('stageHud').textContent=score+1;
+    document.getElementById('levelHud').textContent=score;
+    document.getElementById('stageHud').textContent=score;
     document.getElementById('progressFill').style.width=`${(score/totalStages)*100}%`;
   }
 
@@ -287,7 +300,7 @@
     }
   }
 
-  document.getElementById('answerInput').addEventListener('keydown',e=>{if(e.key==='Enter')checkAnswer();});
+  answerInput.addEventListener('keydown',e=>{if(e.key==='Enter')checkAnswer();});
 </script>
 </body>
 </html>
